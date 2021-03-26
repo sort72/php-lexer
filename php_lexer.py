@@ -1,6 +1,8 @@
 import ply.lex as lex
 import sys
 
+#Alejandro Ortega, Nicole Rios, Jhon Edison Parra
+
 # https://www.dabeaz.com/ply/ply.html#ply_nn6
 reserved = {
     'and' : 'AND',
@@ -123,16 +125,18 @@ tokens = [
 
     # Others   
     'VARIABLE', 
+    'VARIABLE2', 
     'NUMBER',
     'CADENA1',
     'CADENA2',
+    'ID',
 ] + list(reserved.values())
 
 # Check reserved words
 # This approach greatly reduces the number of regular expression rules and is likely to make things a little faster.
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
-    t.type = reserved.get(t.value,'ID')    # Check for reserved words
+    t.type = reserve.value  # Check for reserved words
     return t
 
 # Regular expressions rules for simple tokens
@@ -169,8 +173,9 @@ def t_NUMBER(t):
     return t
 
 def t_VARIABLE(t):
-    r'\$\w+(_\d\w)*'
+    r'\$[^0-9]\w+(_\d\w)*'
     return t
+
 
 def t_CADENA1(t):
     r'\"([^\"].)*\"'

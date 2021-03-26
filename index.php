@@ -2,8 +2,7 @@
 
 echo "¡¡HOla mundo cruel!, dkdkdk.,.,$$$";
 
-$variable = 5;
-
+$6F = 5;
 
 if ($b>0)
 {

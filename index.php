@@ -3,6 +3,7 @@
 echo "¡¡HOla mundo cruel!, dkdkdk.,.,$$$";
 
 $6F = 5;
+$_hola = 3;
 
 if ($b>0)
 {

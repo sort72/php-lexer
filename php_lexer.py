@@ -132,13 +132,6 @@ tokens = [
     'ID',
 ] + list(reserved.values())
 
-# Check reserved words
-# This approach greatly reduces the number of regular expression rules and is likely to make things a little faster.
-def t_ID(t):
-    r'[a-zA-Z_][a-zA-Z_0-9]*'
-    t.type = reserve.value  # Check for reserved words
-    return t
-
 # Regular expressions rules for simple tokens
 t_MOD = r'%'
 t_PLUS   = r'\+'
@@ -161,11 +154,9 @@ t_COLON   = r':'
 t_AMPERSANT = r'\&'
 t_HASHTAG = r'\#'
 t_DOT = r'\.'
-t_DOLLAR = r'\$'
 t_COMILLASIMPLE = r'\''
 t_COMILLASDOBLES = r'\"'
 t_QUESTIONMARK = r'\?'
-
  
 def t_NUMBER(t):
     r'\d+(\.\d+)?'
@@ -173,9 +164,18 @@ def t_NUMBER(t):
     return t
 
 def t_VARIABLE(t):
-    r'\$[^0-9]\w+(_\d\w)*'
+    r'\$[^0-9]\w*(\d|\w)*'
     return t
 
+# Check reserved words
+# This approach greatly reduces the number of regular expression rules and is likely to make things a little faster.
+def t_ID(t):
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
+    if t.value in reserved:
+        t.type = reserved[t.value]  # Check for reserved words
+        return t
+    else:
+        t_error(t)
 
 def t_CADENA1(t):
     r'\"([^\"].)*\"'
@@ -232,11 +232,12 @@ def t_error(t):
     
 def test(data, lexer):
 	lexer.input(data)
-	while True:
+	while True:     
 		tok = lexer.token()
 		if not tok:
 			break
-		print (tok)
+		print(tok)
+
 
 lexer = lex.lex()
 
@@ -249,7 +250,7 @@ if __name__ == '__main__':
 	f = open(fin, 'r')
 	data = f.read()
 	print (data)
-	lexer.input(data)
+	#lexer.input(data)
 	test(data, lexer)
 	#input()
 

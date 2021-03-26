@@ -52,6 +52,7 @@ reserved = {
     'namespace' : 'NAMESPACE',
     'new' : 'NEW',
     'or' : 'OR',
+    'php' : 'PHP',
     'print' : 'PRINT',
     'private' : 'PRIVATE',
     'protected' : 'PROTECTED',
@@ -61,6 +62,7 @@ reserved = {
     'return' : 'RETURN',
     'static' : 'STATIC',
     'switch' : 'SWITCH',
+    'this' : 'THIS',
     'throw' : 'THROW',
     'trait' : 'TRAIT',
     'try' : 'TRY',
@@ -83,6 +85,7 @@ reserved = {
 
 tokens = [
     # Symbols
+    'MOD',
     'PLUS',
     'PLUSPLUS',
     'PLUSEQUAL',
@@ -111,13 +114,18 @@ tokens = [
     'AMPERSANT',
     'HASHTAG',
     'DOT',
+    'QUESTIONMARK',
+    'COMILLASIMPLE',
+    'COMILLASDOBLES',
 
     #variables
     'DOLLAR',
 
     # Others   
-    'ID', 
+    'VARIABLE', 
     'NUMBER',
+    'CADENA1',
+    'CADENA2',
 ] + list(reserved.values())
 
 # Check reserved words
@@ -127,7 +135,8 @@ def t_ID(t):
     t.type = reserved.get(t.value,'ID')    # Check for reserved words
     return t
 
-# Regular expressions rules for simple tokens 
+# Regular expressions rules for simple tokens
+t_MOD = r'%'
 t_PLUS   = r'\+'
 t_MINUS  = r'-'
 t_TIMES  = r'\*'
@@ -149,16 +158,26 @@ t_AMPERSANT = r'\&'
 t_HASHTAG = r'\#'
 t_DOT = r'\.'
 t_DOLLAR = r'\$'
+t_COMILLASIMPLE = r'\''
+t_COMILLASDOBLES = r'\"'
+t_QUESTIONMARK = r'\?'
 
-
+ 
 def t_NUMBER(t):
     r'\d+(\.\d+)?'
     t.value = float(t.value)
     return t
 
-#def t_ID(t):
-#    r'\w+(_\d\w)*'
-#    return t
+def t_VARIABLE(t):
+    r'\$\w+(_\d\w)*'
+    return t
+
+def t_CADENA1(t):
+    r'\"([^\"].)*\"'
+    return t
+def t_CADENA2(t):
+    r'\'([^\'].)*\''
+    return t
 
 def t_LESSEQUAL(t):
 	r'<='
@@ -186,6 +205,10 @@ def t_PLUSPLUS(t):
 
 def t_newline(t):
     r'\n+'
+    t.lexer.lineno += len(t.value)
+
+def t_space(t):
+    r'\s+'
     t.lexer.lineno += len(t.value)
 
 t_ignore = ' \t'

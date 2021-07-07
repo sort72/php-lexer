@@ -73,20 +73,11 @@ reserved = {
     'var' : 'VAR',
     'while' : 'WHILE',
     'xor' : 'XOR',
-    'yield' : 'YIELD',
-    'yield from' : 'YIELDFROM',
-    '__CLASS__' : '__CLASS__',
-    '__DIR__' : '__DIR__',
-    '__FILE__' : '__FILE__',
-    '__FUNCTION__' : '__FUNCTION__',
-    '__LINE__' : '__LINE__',
-    '__METHOD__' : '__METHOD__',
-    '__NAMESPACE__' : '__NAMESPACE__',
-    '__TRAIT__' : '__TRAIT__',
 }
 
-tokens = [
+tokens = list(reserved.values())+[
     # Symbols
+    'ASSIGN',
     'MOD',
     'PLUS',
     'PLUSPLUS',
@@ -130,7 +121,7 @@ tokens = [
     'CADENA1',
     'CADENA2',
     'ID',
-] + list(reserved.values())
+]
 
 # Regular expressions rules for simple tokens
 t_MOD = r'%'
@@ -157,6 +148,7 @@ t_DOT = r'\.'
 t_COMILLASIMPLE = r'\''
 t_COMILLASDOBLES = r'\"'
 t_QUESTIONMARK = r'\?'
+t_DOLLAR = r'\$'
  
 def t_NUMBER(t):
     r'\d+(\.\d+)?'
@@ -164,8 +156,16 @@ def t_NUMBER(t):
     return t
 
 def t_VARIABLE(t):
-    r'\$[^0-9]\w*(\d|\w)*'
+    r'\$[a-zA-Z](\w)*'
     return t
+
+def t_VARIABLE2(t):
+    r'[a-zA-Z](\w)*'
+    if t.value in reserved:
+        t.type = reserved[t.value]  # Check for reserved words
+        return t
+    else:
+        return t
 
 # Check reserved words
 # This approach greatly reduces the number of regular expression rules and is likely to make things a little faster.
@@ -191,6 +191,10 @@ def t_LESSEQUAL(t):
 def t_GREATEREQUAL(t):
 	r'>='
 	return t
+
+def t_ASSIGN(t):
+    r'=>'
+    return t
 
 def t_DEQUAL(t):
 	r'!='
@@ -227,7 +231,7 @@ def t_comments_C99(t):
     t.lexer.lineno += 1
 
 def t_error(t):
-    print ("Lexical error: " + str(t.value[0]))
+    print ("Lexical error: " + str(t.value))
     t.lexer.skip(1)
     
 def test(data, lexer):
